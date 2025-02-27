@@ -16,13 +16,17 @@ nlp = spacy.load("en_core_web_sm")
 PARENT_INPUT_FOLDER = "sec-edgar-filings"
 PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 
-# NAME="toc"
-# page-break-before
+# todo:
+# I'm trying to get the key sections from the table of contents.
+# because chunking seems to not be working how I want, need more customized sections
+# right now i've developed a way to cut out the toc and then save it
 
 def get_toc(text):
     #  note: figure this out
-    a = re.split(r'\bNAME="toc"',text,maxsplit=1)[0]
-    b = re.split(r'page-break-before')
+    a = re.split(r'\bNAME="toc"',text,maxsplit=1)
+    title = a[0]
+    b = re.split(r'page-break-before',a[1],maxsplit=1)
+    return [title + b[1],b[0]]
 
 def chop_off_graphics(text):
     return re.split(r'\bGRAPHIC\b',text, maxsplit=1)[0]
@@ -155,14 +159,33 @@ if __name__ == "__main__":
                 relative_path = os.path.relpath(root, PARENT_INPUT_FOLDER)
                 write_name = account_for_system(relative_path)
 
+                # we're writing two things for now, this is temporary
                 output_path = os.path.join(PARENT_OUTPUT_FOLDER, write_name)
 
                 with open(input_path, "r", encoding="utf-8") as f:
                     text = f.read()
 
-                # 2: Clean the text
-                text = clean_text(text)
+                # here we want to extract the toc for later use
+                items = get_toc(text)
 
+                
+                # start toc processing
+                toc_output_path = os.path.join(PARENT_OUTPUT_FOLDER, "toc_" + write_name)
+                toc = clean_text(items[1])
+                t_sections = chunk_text(toc)
+                # 4: Tokenize sentences
+                for section, content in t_sections.items():
+                    t_sections[section] = " ".join(sent_tokenize(content))
+                # 5: Save to output file
+                with open(toc_output_path, "w", encoding="utf-8") as f:
+                    for section, content in t_sections.items():
+                        f.write(f"\n\n### {section.upper()} ###\n{content}\n")
+                # end toc processing
+
+
+                # resume text processing
+                # 2: Clean the text
+                text = clean_text(items[0])
                 # 3: Split into sections
                 sections = chunk_text(text)
 
@@ -174,5 +197,6 @@ if __name__ == "__main__":
                 with open(output_path, "w", encoding="utf-8") as f:
                     for section, content in sections.items():
                         f.write(f"\n\n### {section.upper()} ###\n{content}\n")
+
 
     print(f"✅ Processing complete! Cleaned files saved in {PARENT_OUTPUT_FOLDER}")
