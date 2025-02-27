@@ -77,6 +77,7 @@ def clean_text(text):
 
     text = re.sub(r';','.',text) # turn ';' into '.'
     text = re.sub(r'\.\.+','.',text) # remove extra trailing '.'
+    text = re.sub(r' p .','',text) #remove point things
 
 
     # text = re.sub
