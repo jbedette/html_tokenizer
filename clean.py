@@ -16,16 +16,75 @@ nlp = spacy.load("en_core_web_sm")
 PARENT_INPUT_FOLDER = "sec-edgar-filings"
 PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 
+def chop_off_graphics(text):
+    return re.split(r'\bGRAPHIC\b',text, maxsplit=1)[0]
+
 # Cleans 10-K text by removing unwanted characters, metadata, and formatting noise.
 def clean_text(text):
+    text = chop_off_graphics(text)
     text = text.lower()  # Convert to lowercase
     text = re.sub(r'<.*?>', ' ', text)  # Remove HTML/SGML tags
     text = re.sub(r'[^a-zA-Z0-9.,;?!\s]', '', text) # Remove special characters EXCEPT basic punctuation
+    text = re.sub(r'nbsp;','',text) # remove inline 'nbsp;'
+
+    text = re.sub(r'stylefontsize','',text) # remove more inline stuff
+    text = re.sub(r'fontsize','',text) # remove more inline stuff
+
+    text = re.sub(r'stylemargintop','',text) # remove more inline stuff
+    text = re.sub(r'margintop','',text) # remove more inline stuff
+
+    text = re.sub(r'stylemarginbottom','',text) # remove more inline stuff
+    text = re.sub(r'marginbottom','',text) # remove more inline stuff
+
+    text = re.sub(r'stylelineheight','',text) # remove more inline stuff
+    text = re.sub(r'lineheight','',text) # remove more inline stuff
+
+
+    text = re.sub(r'styleborderbottom','',text) # remove more inline stuff
+    text = re.sub(r'borderbottom','',text) # remove more inline stuff
+
+    text = re.sub(r'textindent','',text) # remove more inline stuff
+
+    text = re.sub(r'stylealigncenter','',text) # remove more inline stuff
+    text = re.sub(r'aligncenter','',text) # remove more inline stuff
+
+    text = re.sub(r'stylealignleft','',text) # remove more inline stuff
+    text = re.sub(r'alignleft','',text) # remove more inline stuff
+
+    text = re.sub(r'stylealignright','',text) # remove more inline stuff
+    text = re.sub(r'alignright','',text) # remove more inline stuff
+
+    text = re.sub(r'times','',text) # remove more inline stuff
+
+    text = re.sub(r'stylefont face','',text) # remove more inline stuff
+    text = re.sub(r'font face','',text) # remove more inline stuff
+
+    text = re.sub(r'times new roman','',text) # remove more inline stuff
+
+    text = re.sub(r'size\d','',text) # remove more inline stuff
+
+
+
+
+    text = re.sub(r'\b\d+px\b','',text) #remove pixel things 
+    text = re.sub(r'\b\d+pt\b','',text) #remove point things
+
+    text = re.sub(r'146;','\'',text) #remove point things
+    text = re.sub(r'147;','"',text) #remove point things
+    text = re.sub(r'148;','"',text) #remove point things
+    text = re.sub(r'149;','-',text) #remove point things
+
+
+    text = re.sub(r';','.',text) # turn ';' into '.'
+    text = re.sub(r'\.\.+','.',text) # remove extra trailing '.'
+
+
+    # text = re.sub
     text = re.sub(r'begin privacyenhanced message.*?dkhtm', '', text, flags=re.DOTALL)  # Remove SEC metadata blocks
     text = re.sub(r'(accession number|standard industrial classification|file number).*?\n', '', text, flags=re.IGNORECASE)
     text = re.sub(r'[\n]+', '\n', text)  # Normalize line breaks
     text = re.sub(r'\s+', ' ', text)  # Remove extra spaces
-    return text.strip()
+    return text
 
 # Splits text into sections based on common 10-K headers.
 def chunk_text(text):
