@@ -16,6 +16,9 @@ nlp = spacy.load("en_core_web_sm")
 PARENT_INPUT_FOLDER = "sec-edgar-filings"
 PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 
+# NAME="toc"
+# page-break-before
+
 def chop_off_graphics(text):
     return re.split(r'\bGRAPHIC\b',text, maxsplit=1)[0]
 
