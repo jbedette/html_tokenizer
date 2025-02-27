@@ -19,6 +19,11 @@ PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 # NAME="toc"
 # page-break-before
 
+def get_toc(text):
+    #  note: figure this out
+    a = re.split(r'\bNAME="toc"',text,maxsplit=1)[0]
+    b = re.split(r'page-break-before')
+
 def chop_off_graphics(text):
     return re.split(r'\bGRAPHIC\b',text, maxsplit=1)[0]
 
