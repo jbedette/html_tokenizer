@@ -16,6 +16,8 @@ nlp = spacy.load("en_core_web_sm")
 PARENT_INPUT_FOLDER = "sec-edgar-filings"
 PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 
+missing_log_file = os.path.join(PARENT_OUTPUT_FOLDER, "missing_toc.log")
+success_log_file = os.path.join(PARENT_OUTPUT_FOLDER, "success_toc.log")
 # todo:
 # I'm trying to get the key sections from the table of contents.
 # because chunking seems to not be working how I want, need more customized sections
@@ -23,9 +25,17 @@ PARENT_OUTPUT_FOLDER = "cleaned_10k_reports"
 
 def get_toc(text):
     #  note: figure this out
-    a = re.split(r'\bNAME="toc"',text,maxsplit=1)
+    a = re.split(r'\bNAME="toc"|TABLE OF CONTENTS',text,maxsplit=1)
+    if len(a) < 2:
+        with open(missing_log_file, "a", encoding="utf-8") as log:
+            log.write("a\n")
+        return [text,None]
     title = a[0]
-    b = re.split(r'page-break-before',a[1],maxsplit=1)
+    b = re.split(r'page-break-before|FORWARD-LOOKING STATEMENTS',a[1],maxsplit=1)
+    if len(b) < 2:
+        with open(missing_log_file, "a", encoding="utf-8") as log:
+            log.write("b\n")
+        return [title,b[0]]
     return [title + b[1],b[0]]
 
 def chop_off_graphics(text):
@@ -168,19 +178,25 @@ if __name__ == "__main__":
                 # here we want to extract the toc for later use
                 items = get_toc(text)
 
-                
-                # start toc processing
-                toc_output_path = os.path.join(PARENT_OUTPUT_FOLDER, "toc_" + write_name)
-                toc = clean_text(items[1])
-                t_sections = chunk_text(toc)
-                # 4: Tokenize sentences
-                for section, content in t_sections.items():
-                    t_sections[section] = " ".join(sent_tokenize(content))
-                # 5: Save to output file
-                with open(toc_output_path, "w", encoding="utf-8") as f:
+                if items[1]:
+                    # start toc processing
+                    toc_output_path = os.path.join(PARENT_OUTPUT_FOLDER, "toc_" + write_name)
+                    toc = clean_text(items[1])
+                    t_sections = chunk_text(toc)
+                    # 4: Tokenize sentences
                     for section, content in t_sections.items():
-                        f.write(f"\n\n### {section.upper()} ###\n{content}\n")
-                # end toc processing
+                        t_sections[section] = " ".join(sent_tokenize(content))
+                    # 5: Save to output file
+                    with open(toc_output_path, "w", encoding="utf-8") as f:
+                        for section, content in t_sections.items():
+                            f.write(f"\n\n### {section.upper()} ###\n{content}\n")
+                    # end toc processing
+                    with open(success_log_file, "a", encoding="utf-8") as log:
+                        log.write(output_path + "\n")
+                else:
+                    with open(missing_log_file, "a", encoding="utf-8") as log:
+                        log.write(output_path + "\n")
+
 
 
                 # resume text processing
