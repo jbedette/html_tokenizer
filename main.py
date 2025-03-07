@@ -121,8 +121,8 @@ def process_report(file_path, ticker, filing_id):
 #                             t.join()
 #                         threads = []
 
-#     for t in threads:
-#         t.join()
+    for t in threads:
+        t.join()
 
 #     print("✅ All reports processed!")
 
