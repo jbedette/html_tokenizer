@@ -12,7 +12,7 @@
 import os
 import threading
 from pathlib import Path
-from process import detect, html_parse, nlp_extract, handle_tables, conv_plaintext, cleanup
+from process import detect, html_parse, nlp_extract, handle_tables, conv_plaintext, cleanup, toc_extract
 
 # Define input/output directories
 INPUT_DIR = "sec-edgar-filings"
@@ -41,21 +41,24 @@ def process_report(file_path, ticker, filing_id):
         else:
             processed_text = conv_plaintext.normalize_text(raw_content)
 
-        # Step 4: Extract meaningful sections (e.g., Risk Factors, MD&A)
-        sections = nlp_extract.extract_sections(processed_text,output_filename)
+        # debug step extract tocs
+        toc_extract.find_table_of_contents(processed_text,output_filename)
 
-        # Step 5: Extract financial tables (if HTML)
-        if file_type == "html":
-            tables = handle_tables.extract_tables(raw_content)
+        # # Step 4: Extract meaningful sections (e.g., Risk Factors, MD&A)
+        # sections = nlp_extract.extract_sections(processed_text,output_filename)
 
-        # Step 6: Cleanup and final text processing
-        cleaned_text = cleanup.remove_stopwords(processed_text)
+        # # Step 5: Extract financial tables (if HTML)
+        # if file_type == "html":
+        #     tables = handle_tables.extract_tables(raw_content)
+
+        # # Step 6: Cleanup and final text processing
+        # cleaned_text = cleanup.remove_stopwords(processed_text)
 
 
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(cleaned_text)
+        # with open(output_path, "w", encoding="utf-8") as f:
+        #     f.write(cleaned_text)
 
-        print(f"✔ Processed {output_filename}")
+        # print(f"✔ Processed {output_filename}")
 
     except Exception as e:
         print(f"❌ Error processing {ticker}/{filing_id}: {e}")
