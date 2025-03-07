@@ -4,3 +4,4 @@ offending/
 venv/
 scratch/
 tocs/
+__pycache__/
