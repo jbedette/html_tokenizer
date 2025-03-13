@@ -24,3 +24,11 @@ Currently the required packages need python 3.11, so create a python 3.11 venv
    `export SPACY_MAX_DOC_LENGTH=10000000`
    `python -c "import nltk; nltk.download('punkt')"`
    `python -c "import nltk; nltk.download('punkt_tab')"`
+
+=====
+
+pivoting to mistral/llama processing
+
+`pip install llama-cpp-python tqdm beautifulsoup4`
+
+`wget https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.Q4_K_M.gguf -O mistral-7b.gguf`

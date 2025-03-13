@@ -5,3 +5,7 @@ venv/
 scratch/
 tocs/
 __pycache__/
+.env
+*.gguf
+gpt_process/
+mistral_process/

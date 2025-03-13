@@ -1,0 +1,19 @@
+=== CLEANED TOC LINES ===
+PAGE
+PART I
+ITEM 1  Business  3
+ITEM 2  Properties  8
+ITEM 3  Legal Proceedings  9
+ITEM 4  Submission of Matters to a Vote of Security Holders  14 PART II
+ITEM 5  Market Price of Stock and Related Matters  15
+ITEM 6  Selected Financial Data  15
+ITEM 7  Management's Discussion and Analysis  16
+ITEM 7A  Quantitative and Qualitative Disclosures About Market Risk  37
+ITEM 8  Financial Statements and Supplementary Data  38 Index to Financial Statements  38
+ITEM 9  Changes in and Disagreements with Accountants on Accounting and Financial Disclosure  73 PART III
+ITEM 10  Directors and Executive Officers of the Registrant  73
+ITEM 11  Executive Compensation  74
+ITEM 12  Security Ownership of Certain Beneficial Owners and Management  74
+ITEM 13  Certain Relationships and Related Transactions  74
+ITEM 14  Controls and Procedures  74 PART IV
+ITEM 15  Exhibits, Financial Statement Schedules, and Reports on Form 8K  75 Index to Exhibits  75
